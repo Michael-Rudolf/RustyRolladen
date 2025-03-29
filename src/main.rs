@@ -14,12 +14,6 @@ fn main() {
     // Especially in the beginning, this might be wrong if the generated state != the actual state
     let mut current_state = RolladenState::new();
 
-    // For testing purposes only: change some values on the api
-    let mut testing_state = RolladenState::new();
-    testing_state.current_temperature = 16.16;
-    testing_state.current_light_value = 32.32;
-    testing_state.publish_state(config.clone());
-
     loop{
         // 0. Retrieve the state and update
         let mut did_change = false;
@@ -33,7 +27,7 @@ fn main() {
                 close_rolladen(config.clone(), &mut current_state);
             }
         }
-        // 2. Handle light value changes
+        // 2. Handle light & temperature changes
         // 3. Wait however long required
         if did_change{
             sleep(Duration::from_secs(config.debug.request_delay_change.parse().unwrap()));

@@ -9,3 +9,4 @@ serde_json = "0.9.10"
 serde = { version = "1.0.152", features = ["derive"] }
 toml = "0.8.20"
 rppal = "0.22.1"
+colorize = "0.1.0"

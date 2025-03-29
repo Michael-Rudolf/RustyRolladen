@@ -1,6 +1,8 @@
+use std::fmt::format;
 use serde::{Deserialize};
 use serde_json;
 use std::process::{Command};
+use colorize::AnsiColor;
 use toml;
 
 
@@ -45,8 +47,7 @@ impl RolladenState {
     /// Publishes the temperature and the light level on the backend
     pub fn publish_state(&self, config: Config) {
         let json_data = format!(r#"{{"{}": {}, "{}": {}}}"#, config.current_light_value_name, self.current_light_value , config.current_temperature_name, self.current_temperature);
-        println!("{}", json_data);
-        let output_1 = Command::new("curl")
+        let output = Command::new("curl")
             .arg("-X")
             .arg("PATCH")
             .arg("-H")
@@ -57,8 +58,11 @@ impl RolladenState {
             .output()
             .expect("API call failed");
 
+        if !output.status.success(){
+            let error = format!("Requesting change of data failed with error: {:?}", output.stderr).yellow();
+            println!("{}", error);
+        }
 
-        println!("error: {}, output: {}", String::from_utf8_lossy(&*output_1.stderr), String::from_utf8_lossy(&*output_1.stdout));
     }
 }
 
