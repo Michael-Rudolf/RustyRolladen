@@ -31,8 +31,8 @@ impl RolladenState {
         let json_data: serde_json::Value = serde_json::from_str(&*api_result_output).expect("JSON parse error");
 
         let should_be_open = json_data[config.rolladen_target_name].as_bool().unwrap();
-        let current_light_value = json_data[config.current_light_value_name].parse::<f32>().unwrap();
-        let current_temperature = json_data[config.current_temperature_name].parse::<f32>().unwrap();
+        let current_light_value = json_data[config.current_light_value_name].as_f64().unwrap() as f32;
+        let current_temperature = json_data[config.current_temperature_name].as_f64().unwrap() as f32;
 
         Some(RolladenState{ should_be_open, current_light_value, current_temperature})
     }
