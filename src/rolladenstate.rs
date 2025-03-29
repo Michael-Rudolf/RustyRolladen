@@ -44,18 +44,15 @@ impl RolladenState {
 
     /// Publishes the temperature and the light level on the backend
     pub fn publish_state(&self, config: Config) {
-        let parantacie_open = 123 as char; // {
-        let parantacie_closed = 125 as char; // }
-
         let json_data = format!(r#"{{"{}": {}, "{}": {}}}"#, config.current_light_value_name, self.current_light_value , config.current_temperature_name, self.current_temperature);
-
+        println!("{}", json_data);
         let output_1 = Command::new("curl")
             .arg("-X")
             .arg("PATCH")
             .arg("-H")
             .arg("Content-Type: application/json")
             .arg("-d")
-            .arg(format!("'{}\"{}\": {}{}'", parantacie_open, config.current_light_value_name, self.current_light_value, parantacie_closed))
+            .arg(json_data)
             .arg(config.api_address.clone())
             .output()
             .expect("API call failed");
