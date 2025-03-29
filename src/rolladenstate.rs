@@ -17,16 +17,16 @@ impl RolladenState {
         let home_dir = home_dir().unwrap();
 
         // 2. Get the full URL
-        let file_location = home_dir.join(".config/rustyrolladen.json");
+        let file_location = home_dir.join(".config/rustyrolladen.toml");
 
         // 3. cat it
         let output = Command::new("cat")
             .arg(file_location.to_str().unwrap())
             .output()
-            .expect("Config file (~/.config/rustyrolladen.json) missing.");
+            .expect("Config file (~/.config/rustyrolladen.toml) missing.");
 
 
-        // 4. Turn JSON into something readable
+        // 4. Turn TOML into something readable
 
 
 
