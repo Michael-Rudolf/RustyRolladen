@@ -39,7 +39,7 @@ impl RolladenState {
             .output()
             .expect("API call failed");
 
-        let json_data = json::from(api_result.stdout);
+        let json_data = json::from(api_result.stdout.clone());
 
 
 
@@ -49,6 +49,7 @@ impl RolladenState {
         println!("API-Address: {}", config.api_address);
         println!("API response: {:?}", json_data[config.rolladen_target_name]);
         println!("Full response: {:?}", json_data);
+        println!("Full original response: {:?}", String::from_utf8_lossy(&api_result.stdout));
         None
     }
 }
