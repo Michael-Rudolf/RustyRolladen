@@ -44,7 +44,7 @@ impl Config {
         let home_dir = home_dir().unwrap();
 
         // 2. Get the full URL
-        let file_location = home_dir.join(".config/rustyrolladen.toml");
+        let file_location = home_dir.join(".config/rustyrolladen.toml");//pas
 
         // 3. cat it
         let output = Command::new("cat")
