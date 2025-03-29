@@ -1,7 +1,5 @@
 use crate::rolladenstate::RolladenState;
 use rppal::gpio::Gpio;
-use std::process::Command;
-use std::thread;
 use crate::config::Config;
 use std::thread::sleep;
 use std::time::Duration;

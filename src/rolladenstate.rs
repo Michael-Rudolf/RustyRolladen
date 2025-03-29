@@ -1,7 +1,6 @@
 use serde::{Deserialize};
 use serde_json;
 use std::process::{Command};
-use dirs::home_dir;
 use toml;
 
 
@@ -28,14 +27,14 @@ impl RolladenState {
             .output()
             .expect("API call failed");
 
-        let api_result_output = String::from_utf8_lossy(&*api_result.stdout);;
+        let api_result_output = String::from_utf8_lossy(&*api_result.stdout);
         let json_data: serde_json::Value = serde_json::from_str(&*api_result_output).expect("JSON parse error");
 
         let should_be_open = json_data[config.rolladen_target_name].as_bool().unwrap();
         let current_light_value = json_data[config.current_light_value_name].parse::<f32>().unwrap();
         let current_temperature = json_data[config.current_temperature_name].parse::<f32>().unwrap();
 
-        Some(RolladenState{ should_be_open, current_light_value: 0.0})
+        Some(RolladenState{ should_be_open, current_light_value, current_temperature})
     }
 
     pub fn light_significantly_different(&self, other: RolladenState, config: Config) -> bool {

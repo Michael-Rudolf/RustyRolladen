@@ -61,7 +61,7 @@ impl Config {
 
 impl Clone for Config {
     fn clone(&self) -> Config{
-        Config { api_address: self.api_address.clone(), rolladen_target_name: self.rolladen_target_name.clone(), current_light_value_name: self.current_light_value_name.clone(), debug: self.debug.clone(), release: self.release.clone()}
+        Config { api_address: self.api_address.clone(), rolladen_target_name: self.rolladen_target_name.clone(), current_light_value_name: self.current_light_value_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), }
     }
 }
 
