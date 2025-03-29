@@ -21,7 +21,7 @@ impl RolladenState {
 
         // 3. cat it
         let output = Command::new("cat")
-            .arg("~/.config/rustyrolladen.json")
+            .arg(file_location.to_str().unwrap())
             .output()
             .expect("Config file (~/.config/rustyrolladen.json) missing.");
 
