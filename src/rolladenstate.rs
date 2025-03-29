@@ -20,6 +20,7 @@ impl RolladenState {
             .output();
 
         println!("Output: {}", String::from_utf8_lossy(&output.stdout));
+        println!("Output2: {}", String::from_utf8_lossy(&output.stderr));
         None
     }
 }
