@@ -35,7 +35,7 @@ impl RolladenState {
         // Now call the API and retrieve its data
         // 1. Start a process with the API call
         let api_result = Command::new("curl")
-            .arg(format!("\"{}\"", config.api_address))
+            .arg(format!("{}", config.api_address))
             .output()
             .expect("API call failed");
 
