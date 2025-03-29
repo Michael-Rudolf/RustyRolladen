@@ -46,27 +46,22 @@ impl RolladenState {
     pub fn publish_state(&self, config: Config) {
         let parantacie_open = 123 as char; // {
         let parantacie_closed = 125 as char; // }
-        let _ = Command::new("curl")
+
+        let json_data = format!(r#"{{"{}": {}, "{}": {}}}"#, config.current_light_value_name, self.current_light_value , config.current_temperature_name, self.current_temperature);
+
+        let output_1 = Command::new("curl")
             .arg("-X")
             .arg("PATCH")
+            .arg("-H")
+            .arg("Content-Type: application/json")
             .arg("-d")
             .arg(format!("'{}\"{}\": {}{}'", parantacie_open, config.current_light_value_name, self.current_light_value, parantacie_closed))
-            .arg(format!("{}", config.api_address))
-            .output()
-            .expect("API call failed");
-
-        let _ = Command::new("curl")
-            .arg("-X")
-            .arg("PATCH")
-            .arg("-d")
-            .arg(format!("'{}\"{}\": {}{}'", parantacie_open, config.current_temperature_name, self.current_temperature, parantacie_closed))
-            .arg(format!("{}", config.api_address))
+            .arg(config.api_address.clone())
             .output()
             .expect("API call failed");
 
 
-
-
+        println!("error: {}, output: {}", String::from_utf8_lossy(&*output_1.stderr), String::from_utf8_lossy(&*output_1.stdout));
     }
 }
 
