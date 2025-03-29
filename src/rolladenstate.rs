@@ -1,5 +1,6 @@
 use serde::{Deserialize};
 use std::process::{Command};
+use dirs::home_dir;
 
 #[derive(Deserialize, Debug)]
 pub struct RolladenState {
@@ -9,15 +10,25 @@ pub struct RolladenState {
 impl RolladenState {
     pub fn retrieve_current_state() -> Option<RolladenState> {
         // Get the API Location
+        // 1. Get the home directories location
+        if home_dir().is_none(){
+            panic!("Could not find home directory");
+        }
+        let home_dir = home_dir().unwrap();
+
+        // 2. Get the full URL
+        let file_location = home_dir.join(".config/rustyrolladen.json");
+
+        // 3. cat it
         let output = Command::new("cat")
             .arg("~/.config/rustyrolladen.json")
             .output()
             .expect("Config file (~/.config/rustyrolladen.json) missing.");
 
 
-        let out2 = Command::new("sleep")
-            .arg("0.1")
-            .output();
+        // 4. Turn JSON into something readable
+
+
 
         println!("Output: {}", String::from_utf8_lossy(&output.stdout));
         println!("Output2: {}", String::from_utf8_lossy(&output.stderr));
