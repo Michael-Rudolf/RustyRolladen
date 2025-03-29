@@ -3,12 +3,14 @@ use rppal::gpio::Gpio;
 use crate::config::Config;
 use std::thread::sleep;
 use std::time::Duration;
+use std::process::Command;
 
 mod rolladenstate;
 mod config;
 
 fn main() {
     let config = Config::get_global_config();
+    println!("Loaded config.");
 
     /// The expected current state
     // Especially in the beginning, this might be wrong if the generated state != the actual state
@@ -16,6 +18,7 @@ fn main() {
 
     loop{
         // 0. Retrieve the state and update
+        println!("Starting check at {}!", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
         let mut did_change = false;
         let target_rolladen_state = RolladenState::retrieve_current_state(config.clone()).unwrap();
         // 1. Handle target state changes
@@ -23,8 +26,10 @@ fn main() {
             did_change = true;
             if target_rolladen_state.should_be_open {
                 open_rolladen(config.clone(), &mut current_state);
+                println!("Opened rolladen.");
             }else{
                 close_rolladen(config.clone(), &mut current_state);
+                println!("Closed rolladen.");
             }
         }
         // 2. Handle light & temperature changes

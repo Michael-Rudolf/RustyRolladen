@@ -1,3 +1,3 @@
 cargo build
 
-mv target/debug/RustyRolladen /bin
+sudo mv target/debug/RustyRolladen /bin
