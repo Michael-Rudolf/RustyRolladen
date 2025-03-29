@@ -32,7 +32,7 @@ impl RolladenState {
 
 
 
-        println!("API-Address: {}", config.api_location);
+        println!("API-Address: {}", config.api_address);
         println!("Output2: {}", String::from_utf8_lossy(&output.stderr));
         None
     }
@@ -52,7 +52,8 @@ pub struct Config{
     #[serde(rename = "CURRENT_LIGHT_VALUE_NAME")]
     pub current_light_value_name: String,
 
-    pub api_location: String,
+
+
     #[serde(rename = "DEBUG")]
     pub debug: Profile,
     #[serde(rename = "RELEASE")]
