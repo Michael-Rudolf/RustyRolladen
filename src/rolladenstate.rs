@@ -15,12 +15,9 @@ impl RolladenState {
             .expect("Config file (~/.config/rustyrolladen.json) missing.");
 
 
-        while !output.status.success(){
-            let out2 = Command::new("sleep")
-                .arg("0.01")
-                .output();
-
-        }
+        let out2 = Command::new("sleep")
+            .arg("0.1")
+            .output();
 
         println!("Output: {}", String::from_utf8_lossy(&output.stdout));
         None
