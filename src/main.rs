@@ -5,5 +5,7 @@ mod rolladenstate;
 fn main() {
     println!("Hello, world!");
 
-    _ = RolladenState::retrieve_current_state();
+    let current_rolladen_state = RolladenState::retrieve_current_state().unwrap();
+
+    println!("{:?}", current_rolladen_state.should_be_open);
 }

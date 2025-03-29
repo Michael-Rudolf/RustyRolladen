@@ -43,16 +43,9 @@ impl RolladenState {
         let api_result_output = String::from_utf8_lossy(&*api_result.stdout);;
         let json_data: serde_json::Value = serde_json::from_str(&*api_result_output).expect("JSON parse error");
 
+        let should_be_open = json_data[config.rolladen_target_name].as_bool().unwrap();
 
-
-
-
-
-        println!("API-Address: {}", config.api_address);
-        println!("API response: {:?}", json_data[config.rolladen_target_name]);
-        println!("Full response: {:?}", json_data);
-        println!("Full original response: {:?}", String::from_utf8_lossy(&api_result.stdout));
-        None
+        Some(RolladenState{ should_be_open, current_light_value: 0.0})
     }
 }
 
