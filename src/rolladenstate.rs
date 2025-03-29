@@ -3,8 +3,7 @@ use serde_json;
 use std::process::{Command};
 use dirs::home_dir;
 use toml;
-
-
+use toml::Value;
 
 #[derive(Deserialize, Debug)]
 pub struct RolladenState {
@@ -42,7 +41,7 @@ impl RolladenState {
             .expect("API call failed");
 
         let api_result_output = String::from_utf8_lossy(&*api_result.stdout);;
-        let json_data = serde_json::from_str(api_result_output.chars().collect());
+        let json_data: serde_json::Value = serde_json::from_str(&*api_result_output).expect("JSON parse error");
 
 
 
