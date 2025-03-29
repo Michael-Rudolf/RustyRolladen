@@ -15,27 +15,11 @@ pub struct RolladenState {
 }
 
 impl RolladenState {
-    pub fn retrieve_current_state() -> Option<RolladenState> {
-        // Get the API Location
-        // 1. Get the home directories location
-        if home_dir().is_none(){
-            panic!("Could not find home directory");
-        }
-        let home_dir = home_dir().unwrap();
 
-        // 2. Get the full URL
-        let file_location = home_dir.join(".config/rustyrolladen.toml");
-
-        // 3. cat it
-        let output = Command::new("cat")
-            .arg(file_location.to_str().unwrap())
-            .output()
-            .expect("Config file (~/.config/rustyrolladen.toml) missing.");
-
-
-        // 4. Turn TOML into something readable
-        let config: Config = toml::from_str(&String::from_utf8_lossy(&output.stdout)).expect("Could not parse toml");
-
+    pub fn new() -> RolladenState {
+        RolladenState{ should_be_open: true, current_light_value: 1f32}
+    }
+    pub fn retrieve_current_state(config: Config) -> Option<RolladenState> {
         // Now call the API and retrieve its data
         // 1. Start a process with the API call
         let api_result = Command::new("curl")
@@ -49,6 +33,11 @@ impl RolladenState {
         let should_be_open = json_data[config.rolladen_target_name].as_bool().unwrap();
 
         Some(RolladenState{ should_be_open, current_light_value: 0.0})
+    }
+
+    pub fn light_significantly_different(&self, other: RolladenState, config: Config) -> bool {
+        let difference = self.current_light_value - other.current_light_value;
+        difference.abs() > config.debug.min_brightness_difference.parse().unwrap()
     }
 }
 
