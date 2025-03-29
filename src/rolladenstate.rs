@@ -1,6 +1,7 @@
 use serde::{Deserialize};
 use std::process::{Command};
 use dirs::home_dir;
+use toml;
 
 #[derive(Deserialize, Debug)]
 pub struct RolladenState {
@@ -27,13 +28,27 @@ impl RolladenState {
 
 
         // 4. Turn TOML into something readable
+        let config: Config = toml::from_str(&String::from_utf8_lossy(&output.stdout)).expect("Could not parse toml");
 
 
 
-        println!("Output: {}", String::from_utf8_lossy(&output.stdout));
+        println!("API-Address: {}", config.debug.api_location);
         println!("Output2: {}", String::from_utf8_lossy(&output.stderr));
         None
     }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Config{
+    pub debug: Profile,
+    pub release: Profile,
+}
+
+#[derive(Debug, Deserialize)]
+struct Profile{
+    pub api_location: String,
+    pub standard_request_delay: String,
+    pub request_delay_change: String,
 }
 
 #[derive(Deserialize, Debug)]
