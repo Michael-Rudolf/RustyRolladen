@@ -7,5 +7,5 @@ fn main() {
 
     let current_rolladen_state = RolladenState::retrieve_current_state().unwrap();
 
-    println!("{:?}", current_rolladen_state.should_be_open);
+    println!("{:?}", current_rolladen_state.should_be_open);//asdf
 }
