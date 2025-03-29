@@ -40,14 +40,19 @@ impl RolladenState {
 
 #[derive(Debug, Deserialize)]
 pub struct Config{
+    #[serde(rename = "DEBUG")]
     pub debug: Profile,
+    #[serde(rename = "RELEASE")]
     pub release: Profile,
 }
 
 #[derive(Debug, Deserialize)]
 struct Profile{
+    #[serde(rename = "API_LOCATION")]
     pub api_location: String,
+    #[serde(rename = "STANDARD_REQUEST_DELAY")]
     pub standard_request_delay: String,
+    #[serde(rename = "REQUEST_DELAY_CHANGE")]
     pub request_delay_change: String,
 }
 
