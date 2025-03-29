@@ -11,7 +11,16 @@ mod config;
 
 fn main() {
     let config = Config::get_global_config();
+
+    /// The expected current state
+    // Especially in the beginning, this might be wrong if the generated state != the actual state
     let mut current_state = RolladenState::new();
+
+    // For testing purposes only: change some values on the api
+    let mut testing_state = RolladenState::new();
+    testing_state.current_temperature = 16.16;
+    testing_state.current_light_value = 32.32;
+    testing_state.publish_state(config.clone());
 
     loop{
         // 0. Retrieve the state and update
@@ -30,9 +39,9 @@ fn main() {
         // 3. Wait however long required
         if did_change{
             sleep(Duration::from_secs(config.debug.request_delay_change.parse().unwrap()));
-            continue;
+        }else {
+            sleep(Duration::from_secs(config.debug.standard_request_delay.parse().unwrap()));
         }
-        sleep(Duration::from_secs(config.debug.standard_request_delay.parse().unwrap()));
     }
 }
 
@@ -40,14 +49,14 @@ fn open_rolladen(config:  Config, current_state:  &mut RolladenState) {
     let pin_number = config.debug.open_pin;
 
     toggle_gpio_pin(pin_number.parse().unwrap(), config.debug.gpio_press_pin_duration.parse().unwrap());
-    *current_state.should_be_open = true;
+    current_state.should_be_open = true;
 }
 
 fn close_rolladen(config:  Config, current_state:  &mut RolladenState) {
     let pin_number = config.debug.close_pin;
 
     toggle_gpio_pin(pin_number.parse().unwrap(), config.debug.gpio_press_pin_duration.parse().unwrap());
-    *current_state.should_be_open = false;
+    current_state.should_be_open = false;
 }
 
 fn toggle_gpio_pin(pin_number: u8, seconds: u8){

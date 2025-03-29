@@ -20,6 +20,10 @@ pub struct Config{
     pub debug: Profile,
     #[serde(rename = "RELEASE")]
     pub release: Profile,
+
+    /// The name the API uses to communicate the amount of temperature
+    #[serde(rename = "CURRENT_TEMPERATURE_NAME")]
+    pub current_temperature_name: String,
 }
 
 impl Config {
@@ -62,7 +66,7 @@ impl Clone for Config {
 }
 
 #[derive(Debug, Deserialize)]
-struct Profile{
+pub struct Profile{
     /// The request delay after a request that didn't change the rolladens state.
     #[serde(rename = "STANDARD_REQUEST_DELAY")]
     pub standard_request_delay: String,
