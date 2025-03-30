@@ -21,30 +21,38 @@ fn main() {
     /// The expected current state
     // Especially in the beginning, this might be wrong if the generated state != the actual state
     let mut current_state = RolladenState::new();
-
+    let mut did_change = false;
     loop{
         // 0. Retrieve the state and update
         info!("Starting check at {}!", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
-        let mut did_change = false;
         let target_rolladen_state = RolladenState::retrieve_current_state(config.clone()).unwrap();
+        
         // 1. Handle target state changes
         if target_rolladen_state.should_be_open != current_state.should_be_open {
             did_change = true;
+            println!("Did change now true");
             if target_rolladen_state.should_be_open {
                 open_rolladen(config.clone(), &mut current_state);
                 info!("Opened rolladen at {}.", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
             }else{
                 close_rolladen(config.clone(), &mut current_state);
-                println!("Closed rolladen at {}.", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
+                info!("Closed rolladen at {}.", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
             }
         }
+        
         // 2. Handle light & temperature changes
+        
         // 3. Wait however long required
         if did_change{
-            sleep(Duration::from_secs(config.get_profile().unwrap().make_default_delay() as u64));
+            println!("stuff did change in the end");
+            sleep(Duration::from_secs(config.get_profile().unwrap().request_delay_change.parse::<u64>().unwrap()));
         }else {
-            sleep(Duration::from_secs(config.get_profile().unwrap().standard_request_delay.parse().unwrap()));
+            println!("stuff didnt change in the end");
+            sleep(Duration::from_secs(config.get_profile().unwrap().make_default_delay() as u64));
         }
+        
+        // 4. Reset the did_change value
+        did_change = false
     }
 }
 

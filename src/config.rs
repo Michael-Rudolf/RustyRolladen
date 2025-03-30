@@ -2,7 +2,9 @@ use std::process::Command;
 use dirs::home_dir;
 use serde::Deserialize;
 use rand::{random, rng};
-
+use rand::prelude::IndexedRandom;
+use log::{info};
+use systemd_journal_logger::JournalLog;
 #[derive(Debug, Deserialize)]
 pub struct Config{
     /// The address of the API to call
@@ -123,10 +125,12 @@ impl Profile{
     pub fn make_default_delay(&self) -> i32{
         let mut new_rng = rng();
         let max_change: i32 = self.random_delay_difference_max.parse::<i32>().unwrap();
-        let  possibilities = (-max_change..max_change).collect();
+        let min_change: i32 = max_change * (-1);
+        let possibilities: Vec<i32> = (min_change..max_change).collect();
         let random_delay_difference = possibilities.choose(&mut new_rng);
         let default_change: i32 = self.standard_request_delay.parse::<i32>().unwrap();
-        default_change + random_delay_difference
+        info!("Random delay difference: {}.", random_delay_difference.unwrap());
+        default_change + random_delay_difference.unwrap()
     }
 }
 
