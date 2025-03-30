@@ -4,6 +4,8 @@ use serde_json;
 use std::process::{Command};
 use colorize::AnsiColor;
 use toml;
+use systemd_journal_logger::JournalLog;
+use log::{error, info, warn};
 
 
 use crate::config::Config;
@@ -41,7 +43,7 @@ impl RolladenState {
 
     pub fn light_significantly_different(&self, other: RolladenState, config: Config) -> bool {
         let difference = self.current_light_value - other.current_light_value;
-        difference.abs() > config.debug.min_brightness_difference.parse().unwrap()
+        difference.abs() > config.get_profile().unwrap().min_brightness_difference.parse().unwrap()
     }
 
     /// Publishes the temperature and the light level on the backend
@@ -59,8 +61,7 @@ impl RolladenState {
             .expect("API call failed");
 
         if !output.status.success(){
-            let error = format!("Requesting change of data failed with error: {:?}", output.stderr).yellow();
-            println!("{}", error);
+            error!("Requesting change of data failed with error: {:?}", output.stderr);
         }
 
     }

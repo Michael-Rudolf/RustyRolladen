@@ -10,3 +10,6 @@ serde = { version = "1.0.152", features = ["derive"] }
 toml = "0.8.20"
 rppal = "0.22.1"
 colorize = "0.1.0"
+systemd-journal-logger = "2.0.0"
+log = "0.4.26"
+rand = "0.9.0"
