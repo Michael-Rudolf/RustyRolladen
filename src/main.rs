@@ -18,7 +18,7 @@ fn main() {
     info!("Loaded configuration and selected {} profile.", config.default_profile);
 
     // Especially in the beginning, this might be wrong if the generated state != the actual state
-    /// The expected current state
+    // The expected current state
     let mut current_state = RolladenState::new();
     let mut did_change = false;
     loop{
