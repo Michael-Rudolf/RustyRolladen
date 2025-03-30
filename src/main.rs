@@ -3,9 +3,8 @@ use rppal::gpio::Gpio;
 use crate::config::Config;
 use std::thread::sleep;
 use std::time::Duration;
-use std::process::Command;
 use systemd_journal_logger::JournalLog;
-use log::{info, error, warn};
+use log::info;
 use std::env::args;
 
 mod rolladenstate;
@@ -18,8 +17,8 @@ fn main() {
     log::set_max_level(log::LevelFilter::Info);
     info!("Loaded configuration and selected {} profile.", config.default_profile);
 
-    /// The expected current state
     // Especially in the beginning, this might be wrong if the generated state != the actual state
+    /// The expected current state
     let mut current_state = RolladenState::new();
     let mut did_change = false;
     loop{

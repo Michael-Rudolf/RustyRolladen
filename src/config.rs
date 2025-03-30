@@ -1,10 +1,10 @@
 use std::process::Command;
 use dirs::home_dir;
 use serde::Deserialize;
-use rand::{random, rng};
+use rand::rng;
 use rand::prelude::IndexedRandom;
 use log::{info};
-use systemd_journal_logger::JournalLog;
+
 #[derive(Debug, Deserialize)]
 pub struct Config{
     /// The address of the API to call

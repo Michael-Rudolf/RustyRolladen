@@ -1,11 +1,7 @@
-use std::fmt::format;
 use serde::{Deserialize};
 use serde_json;
 use std::process::{Command};
-use colorize::AnsiColor;
-use toml;
-use systemd_journal_logger::JournalLog;
-use log::{error, info, warn};
+use log::error;
 
 
 use crate::config::Config;
