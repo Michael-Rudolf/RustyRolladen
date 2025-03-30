@@ -9,7 +9,7 @@ pub struct Config{
     #[serde(rename = "API_LOCATION")]
     pub api_address: String,
 
-    /// The default profile if no other profile is specified and it's not started by an autostart.
+    /// The default profile if no other profile is specified, and it's not started by an autostart.
     #[serde(rename = "DEFAULT_PROFILE")]
     pub default_profile: String,
 

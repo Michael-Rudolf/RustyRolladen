@@ -16,7 +16,7 @@ fn main() {
     make_config_fit_args(&mut config);
     JournalLog::new().unwrap().install().unwrap();
     log::set_max_level(log::LevelFilter::Info);
-    info!("Loaded configuartion.");
+    info!("Loaded configuration.");
 
     /// The expected current state
     // Especially in the beginning, this might be wrong if the generated state != the actual state
