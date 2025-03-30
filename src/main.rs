@@ -16,7 +16,7 @@ fn main() {
     make_config_fit_args(&mut config);
     JournalLog::new().unwrap().install().unwrap();
     log::set_max_level(log::LevelFilter::Info);
-    info!("Loaded configuration.");
+    info!("Loaded configuration and selected {} profile.", config.default_profile);
 
     /// The expected current state
     // Especially in the beginning, this might be wrong if the generated state != the actual state
@@ -24,19 +24,18 @@ fn main() {
     let mut did_change = false;
     loop{
         // 0. Retrieve the state and update
-        info!("Starting check at {}!", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
+        info!("Starting check");
         let target_rolladen_state = RolladenState::retrieve_current_state(config.clone()).unwrap();
         
         // 1. Handle target state changes
         if target_rolladen_state.should_be_open != current_state.should_be_open {
             did_change = true;
-            println!("Did change now true");
             if target_rolladen_state.should_be_open {
                 open_rolladen(config.clone(), &mut current_state);
-                info!("Opened rolladen at {}.", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
+                info!("Opened rolladen at");
             }else{
                 close_rolladen(config.clone(), &mut current_state);
-                info!("Closed rolladen at {}.", String::from_utf8_lossy(&*Command::new("date").output().unwrap().stdout));
+                info!("Closed rolladen");
             }
         }
         
@@ -44,10 +43,8 @@ fn main() {
         
         // 3. Wait however long required
         if did_change{
-            println!("stuff did change in the end");
             sleep(Duration::from_secs(config.get_profile().unwrap().request_delay_change.parse::<u64>().unwrap()));
         }else {
-            println!("stuff didnt change in the end");
             sleep(Duration::from_secs(config.get_profile().unwrap().make_default_delay() as u64));
         }
         
