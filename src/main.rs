@@ -56,6 +56,8 @@ fn make_config_fit_args(config: &mut Config) {
     let args: Vec<String> = args().collect();
     if args.contains(&"--autostart".to_string()){
         config.set_autostart_as_default();
+        // For some reason, parsing json only works later, so wait 10 secs.
+        sleep(Duration::from_secs(10));
     }else if args.contains(&"--debug".to_string()){
         config.default_profile = String::from("debug");
     }else if args.contains(&"--release".to_string()){
