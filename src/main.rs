@@ -1,12 +1,13 @@
 use crate::rolladenstate::RolladenState;
 use rppal::gpio::Gpio;
+use rppal::i2c::I2c;
 use crate::config::Config;
 use std::thread::sleep;
 use std::time::Duration;
 use systemd_journal_logger::JournalLog;
 use log::info;
 use std::env::args;
-
+use bme680::{Bme680, FieldData, I2CAddress, PowerMode, SettingsBuilder};
 mod rolladenstate;
 mod config;
 
@@ -17,10 +18,29 @@ fn main() {
     log::set_max_level(log::LevelFilter::Info);
     info!("Loaded configuration and selected {} profile.", config.default_profile);
 
-    // Especially in the beginning, this might be wrong if the generated state != the actual state
-    // The expected current state
-    let mut current_state = RolladenState::new();
+    // Create an I2C interface and set the sensor address
+    let i2c = I2c::new()?;
+    let mut sensor = Bme680::init(i2c, &mut Duration::from_millis(100), I2CAddress::Primary)?;
+
+    // Set up sensor configuration
+    let settings = SettingsBuilder::new()
+        .with_temperature_oversampling(bme680::OversamplingSetting::OS8x)
+        .with_humidity_oversampling(bme680::OversamplingSetting::OS2x)
+        .with_pressure_oversampling(bme680::OversamplingSetting::OS4x)
+        .with_gas_measurement(Duration::from_millis(200), 320, 25)
+        .build();
+
+    sensor.set_sensor_settings(&mut Duration::from_millis(100), settings)?;
+
+
+    sensor.set_sensor_mode(&mut Duration::from_millis(500), PowerMode::ForcedMode)?;
+    sleep(Duration::from_millis(500));
+
+    let data = sensor.get_sensor_data(&mut Duration::from_millis(500));
+
+    info!("Temp: {} °C", data.temperature_celsius());
     let mut did_change = false;
+    let mut current_state = RolladenState::new();
     loop{
         // 0. Retrieve the state and update
         info!("Starting check");

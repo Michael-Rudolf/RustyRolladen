@@ -23,18 +23,26 @@ pub struct Config{
     #[serde(rename = "ROLLADEN_TARGET_NAME")]
     pub rolladen_target_name: String,
 
-    /// The name the API uses to communicate the amount of light
-    #[serde(rename = "CURRENT_LIGHT_VALUE_NAME")]
-    pub current_light_value_name: String,
+    /// The name the API uses to communicate the temperature
+    #[serde(rename = "CURRENT_TEMPERATURE_NAME")]
+    pub current_temperature_name: String,
+
+    /// The name the API uses to communicate the air pressure
+    #[serde(rename = "CURRENT_PRESSURE_NAME")]
+    pub current_pressure_name: String,
+
+    /// The name the API uses to communicate the humidity
+    #[serde(rename = "CURRENT_HUMIDITY_NAME")]
+    pub current_humidity_name: String,
+
+    /// The name the API uses to communicate the gas resistance
+    #[serde(rename = "CURRENT_RESISTANCE_NAME")]
+    pub current_gas_resistance_name: String,
 
     #[serde(rename = "DEBUG")]
     debug: Profile,
     #[serde(rename = "RELEASE")]
     release: Profile,
-
-    /// The name the API uses to communicate the amount of temperature
-    #[serde(rename = "CURRENT_TEMPERATURE_NAME")]
-    pub current_temperature_name: String,
 }
 
 impl Config {
@@ -84,7 +92,7 @@ impl Config {
 
 impl Clone for Config {
     fn clone(&self) -> Config{
-        Config { api_address: self.api_address.clone(), default_profile: self.default_profile.clone(), autostart_profile: self.autostart_profile.clone(), rolladen_target_name: self.rolladen_target_name.clone(), current_light_value_name: self.current_light_value_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), }
+        Config { api_address: self.api_address.clone(), default_profile: self.default_profile.clone(), autostart_profile: self.autostart_profile.clone(), rolladen_target_name: self.rolladen_target_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), current_pressure_name: self.current_pressure_name.clone(), current_humidity_name: self.current_humidity_name.clone(), current_gas_resistance_name: self.current_gas_resistance_name.clone(),}
     }
 }
 
