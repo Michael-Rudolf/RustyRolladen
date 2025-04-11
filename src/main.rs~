@@ -1,17 +1,17 @@
 use crate::rolladenstate::RolladenState;
 use rppal::gpio::Gpio;
-use linux_embedded_hal::{I2cdev, Delay};
+use rppal::i2c::I2c;
 use crate::config::Config;
 use std::thread::sleep;
 use std::time::Duration;
 use systemd_journal_logger::JournalLog;
 use log::info;
 use std::env::args;
-use bme680::{Bme680, I2CAddress, PowerMode, SettingsBuilder};
+use bme680::{Bme680, FieldData, I2CAddress, PowerMode, SettingsBuilder};
 mod rolladenstate;
 mod config;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() {
     let mut config = Config::get_global_config();
     make_config_fit_args(&mut config);
     JournalLog::new().unwrap().install().unwrap();
@@ -19,9 +19,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Loaded configuration and selected {} profile.", config.default_profile);
 
     // Create an I2C interface and set the sensor address
-    let i2c = I2cdev::new("/dev/i2c-1")?;
-    let mut delay = Delay;
-    let mut sensor = Bme680::init(i2c, &mut delay, I2CAddress::Primary).unwrap();
+    let i2c = I2c::new()?;
+    let mut sensor = Bme680::init(i2c, &mut Duration::from_millis(100), I2CAddress::Primary)?;
 
     // Set up sensor configuration
     let settings = SettingsBuilder::new()
@@ -31,15 +30,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_gas_measurement(Duration::from_millis(200), 320, 25)
         .build();
 
-    sensor.set_sensor_settings(&mut delay, settings);
+    sensor.set_sensor_settings(&mut Duration::from_millis(100), settings)?;
 
 
-    sensor.set_sensor_mode(&mut delay, PowerMode::ForcedMode);
+    sensor.set_sensor_mode(&mut Duration::from_millis(500), PowerMode::ForcedMode)?;
     sleep(Duration::from_millis(500));
 
-    let (data, _condition) = sensor.get_sensor_data(&mut delay).unwrap();
-    
-    println!("Temp: {} C", data.temperature_celsius());
+    let data = sensor.get_sensor_data(&mut Duration::from_millis(500));
+
     info!("Temp: {} °C", data.temperature_celsius());
     let mut did_change = false;
     let mut current_state = RolladenState::new();

@@ -35,6 +35,10 @@ impl RolladenState {
         Some(RolladenState{ should_be_open, current_temperature})
     }
 
+    pub fn light_significantly_different(&self, other: RolladenState, config: Config) -> bool {
+        let difference = self.current_light_value - other.current_light_value;
+        difference.abs() > config.get_profile().unwrap().min_brightness_difference.parse().unwrap()
+    }
 
     /// Publishes the temperature and the light level on the backend
     pub fn publish_state(&self, config: Config) {
