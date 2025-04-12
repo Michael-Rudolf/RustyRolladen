@@ -7,13 +7,14 @@ use log::{info};
 
 #[derive(Debug, Deserialize)]
 pub struct Config{
-    /// The address of the API to call
+    /// The address of the API to call where the target state is defined
     #[serde(rename = "API_MAIN_LOCATION")]
     pub api_address: String,
 
-    /// The address of the API where the data is located
+    /// The address of the API where the data (e.g. room temp) is
     #[serde(rename = "API_DATA_LOCATION")]
     pub data_address: String,
+
 
     /// The default profile if no other profile is specified, and it's not started by an autostart.
     #[serde(rename = "DEFAULT_PROFILE")]
@@ -96,7 +97,7 @@ impl Config {
 
 impl Clone for Config {
     fn clone(&self) -> Config{
-        Config { api_address: self.api_address.clone(), data_address: self.data_address.clone(), default_profile: self.default_profile.clone(), autostart_profile: self.autostart_profile.clone(), rolladen_target_name: self.rolladen_target_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), current_pressure_name: self.current_pressure_name.clone(), current_humidity_name: self.current_humidity_name.clone(), current_gas_resistance_name: self.current_gas_resistance_name.clone(),}
+        Config { api_address: self.api_address.clone(), default_profile: self.default_profile.clone(), autostart_profile: self.autostart_profile.clone(), rolladen_target_name: self.rolladen_target_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), current_pressure_name: self.current_pressure_name.clone(), current_humidity_name: self.current_humidity_name.clone(), current_gas_resistance_name: self.current_gas_resistance_name.clone(),}
     }
 }
 

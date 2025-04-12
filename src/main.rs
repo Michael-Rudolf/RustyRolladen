@@ -31,10 +31,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_gas_measurement(Duration::from_millis(200), 320, 25)
         .build();
 
-    sensor.set_sensor_settings(&mut delay, settings);
+    let _ = sensor.set_sensor_settings(&mut delay, settings);
 
 
-    sensor.set_sensor_mode(&mut delay, PowerMode::ForcedMode);
+    let _ = sensor.set_sensor_mode(&mut delay, PowerMode::ForcedMode);
     sleep(Duration::from_millis(500));
 
     let (data, _condition) = sensor.get_sensor_data(&mut delay).unwrap();
