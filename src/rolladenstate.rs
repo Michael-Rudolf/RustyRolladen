@@ -1,7 +1,7 @@
 use serde::{Deserialize};
 use serde_json;
 use std::process::{Command};
-use log::error;
+use log::{info, error};
 
 
 use crate::config::Config;
@@ -41,7 +41,9 @@ impl RolladenState {
 
     /// Publishes the temperature and the light level on the backend
     pub fn publish_state(&self, config: Config) {
-        let json_data = format!(r#"{{"{}": {}, "{}": {}, "{}": {}, "{}": {}"#, config.current_temperature_name, self.current_temperature, config.current_gas_resistance_name, self.current_gas_resistance, config.current_humidity_name, self.current_humidity, config.current_pressure_name, self.current_pressure);
+        let json_data = format!(r#"{{"{}": {}, "{}": {}, "{}": {}, "{}": {}}}"#, config.current_temperature_name, self.current_temperature, config.current_gas_resistance_name, self.current_gas_resistance, config.current_humidity_name, self.current_humidity, config.current_pressure_name, self.current_pressure);
+        info!("Trying to update server data (sending json: {}).", json_data);
+
         let output = Command::new("curl")
             .arg("-X")
             .arg("PATCH")
@@ -55,9 +57,9 @@ impl RolladenState {
 
         if !output.status.success(){
             error!("Requesting change of data failed with error: {:?}", output.stderr);
+        }else{
+            info!("Update seems to have succeeded");
         }
 
     }
 }
-
-

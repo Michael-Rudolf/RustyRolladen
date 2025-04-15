@@ -106,7 +106,9 @@ pub struct Profile{
     #[serde(rename = "STANDARD_REQUEST_DELAY")]
     pub standard_request_delay: String,
 
-
+    /// The amount of iterations it takes until sensor data is uploaded
+    #[serde(rename = "ITERATIONS_SEND_DATA")]
+    pub iterations_send_data: u32,
     /// The maximal difference from the default delay between the cycles
     // This is for appearing more randomly
     #[serde(rename = "RANDOM_DELAY_DIFFERENCE_MAX")]
@@ -148,6 +150,6 @@ impl Profile{
 
 impl Clone for Profile{
     fn clone(&self) -> Profile{
-        Profile{standard_request_delay: self.standard_request_delay.clone(), request_delay_change: self.request_delay_change.clone(), random_delay_difference_max: self.random_delay_difference_max.clone(), open_pin: self.open_pin.clone(), close_pin: self.close_pin.clone(), min_brightness_difference: self.min_brightness_difference.clone(), gpio_press_pin_duration: self.gpio_press_pin_duration.clone()}
+        Profile{standard_request_delay: self.standard_request_delay.clone(), request_delay_change: self.request_delay_change.clone(), iterations_send_data: self.iterations_send_data, random_delay_difference_max: self.random_delay_difference_max.clone(), open_pin: self.open_pin.clone(), close_pin: self.close_pin.clone(), min_brightness_difference: self.min_brightness_difference.clone(), gpio_press_pin_duration: self.gpio_press_pin_duration.clone()}
     }
 }

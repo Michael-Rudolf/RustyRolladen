@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let i2c = I2cdev::new("/dev/i2c-1")?;
     let mut delay = Delay;
     let mut sensor = Bme680::init(i2c, &mut delay, I2CAddress::Primary).unwrap();
-
+    
     // Set up sensor configuration
     let settings = SettingsBuilder::new()
         .with_temperature_oversampling(bme680::OversamplingSetting::OS8x)
@@ -32,17 +32,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build();
 
     let _ = sensor.set_sensor_settings(&mut delay, settings);
+    info!("Set sensor (bme680) up");
 
 
-    let _ = sensor.set_sensor_mode(&mut delay, PowerMode::ForcedMode);
-    sleep(Duration::from_millis(500));
-
-    let (data, _condition) = sensor.get_sensor_data(&mut delay).unwrap();
-    
-    println!("Temp: {} C", data.temperature_celsius());
-    info!("Temp: {} °C", data.temperature_celsius());
     let mut did_change = false;
     let mut current_state = RolladenState::new();
+    let mut iterations_since_data_send: u32 = 1;
     loop{
         // 0. Retrieve the state and update
         info!("Starting check");
@@ -61,7 +56,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         
         // 2. Handle light & temperature changes
-        
+        let _ = sensor.set_sensor_mode(&mut delay, PowerMode::ForcedMode);
+        sleep(Duration::from_millis(500));
+        let (data, _condition) = sensor.get_sensor_data(&mut delay).unwrap();
+        current_state.current_temperature = data.temperature_celsius();
+        current_state.current_pressure = data.pressure_hpa();
+        current_state.current_humidity = data.humidity_percent();
+        current_state.current_gas_resistance = data.gas_resistance_ohm() as f32;
+        if iterations_since_data_send >= config.get_profile().unwrap().iterations_send_data{
+            // Read the data whenever to keep sensor warm, only send sometimes to reduce bandwidth
+            current_state.publish_state(config.clone());
+            iterations_since_data_send = 0;
+        }
         // 3. Wait however long required
         if did_change{
             sleep(Duration::from_secs(config.get_profile().unwrap().request_delay_change.parse::<u64>().unwrap()));
@@ -69,8 +75,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             sleep(Duration::from_secs(config.get_profile().unwrap().make_default_delay() as u64));
         }
         
-        // 4. Reset the did_change value
-        did_change = false
+        // 4. Reset the did_change value & increment the counter
+        did_change = false;
+        iterations_since_data_send += 1;
     }
 }
 
