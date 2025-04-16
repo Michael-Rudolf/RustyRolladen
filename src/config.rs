@@ -43,6 +43,10 @@ pub struct Config{
     #[serde(rename = "CURRENT_RESISTANCE_NAME")]
     pub current_gas_resistance_name: String,
 
+    /// The name the API uses to communicate the last time the above values have been updated
+    #[serde(rename = "UPDATE_DATE_NAME")]
+    pub last_update_date_name: String,
+
     #[serde(rename = "DEBUG")]
     debug: Profile,
     #[serde(rename = "RELEASE")]
@@ -96,7 +100,7 @@ impl Config {
 
 impl Clone for Config {
     fn clone(&self) -> Config{
-        Config { api_address: self.api_address.clone(), data_address: self.data_address.clone(), default_profile: self.default_profile.clone(), autostart_profile: self.autostart_profile.clone(), rolladen_target_name: self.rolladen_target_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), current_pressure_name: self.current_pressure_name.clone(), current_humidity_name: self.current_humidity_name.clone(), current_gas_resistance_name: self.current_gas_resistance_name.clone(),}
+        Config { last_update_date_name: self.last_update_date_name.clone(), api_address: self.api_address.clone(), data_address: self.data_address.clone(), default_profile: self.default_profile.clone(), autostart_profile: self.autostart_profile.clone(), rolladen_target_name: self.rolladen_target_name.clone(), debug: self.debug.clone(), release: self.release.clone(), current_temperature_name: self.current_temperature_name.clone(), current_pressure_name: self.current_pressure_name.clone(), current_humidity_name: self.current_humidity_name.clone(), current_gas_resistance_name: self.current_gas_resistance_name.clone(),}
     }
 }
 

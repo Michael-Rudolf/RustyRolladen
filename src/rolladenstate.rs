@@ -41,7 +41,16 @@ impl RolladenState {
 
     /// Publishes the temperature and the light level on the backend
     pub fn publish_state(&self, config: Config) {
-        let json_data = format!(r#"{{"{}": {}, "{}": {}, "{}": {}, "{}": {}}}"#, config.current_temperature_name, self.current_temperature, config.current_gas_resistance_name, self.current_gas_resistance, config.current_humidity_name, self.current_humidity, config.current_pressure_name, self.current_pressure);
+        // Retrieve the date
+        let date_command = Command::new("date")
+            .output()
+            .expect("Executing date command failed.");
+
+        let mut date = date_command.stdout;
+        date.pop(); // Last element is a newline
+
+
+        let json_data = format!(r#"{{"{}": {}, "{}": {}, "{}": {}, "{}": {}, "{}": "{}"}}"#, config.current_temperature_name, self.current_temperature, config.current_gas_resistance_name, self.current_gas_resistance, config.current_humidity_name, self.current_humidity, config.current_pressure_name, self.current_pressure, config.last_update_date_name, String::from_utf8_lossy(&date));
         info!("Trying to update server data (sending json: {}).", json_data);
 
         let output = Command::new("curl")
@@ -54,7 +63,9 @@ impl RolladenState {
             .arg(config.data_address.clone())
             .output()
             .expect("API call failed");
+        
 
+        info!("Stdout from curl: \n{}\nStderr from curl: \n{}\n", String::from_utf8_lossy(&output.stdout), String::from_utf8_lossy(&output.stderr));
         if !output.status.success(){
             error!("Requesting change of data failed with error: {:?}", output.stderr);
         }else{

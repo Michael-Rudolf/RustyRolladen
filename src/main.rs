@@ -12,8 +12,19 @@ mod rolladenstate;
 mod config;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut config = Config::get_global_config();
+   let mut config = Config::get_global_config();
     make_config_fit_args(&mut config);
+   
+    {
+        // Close the rolladen because something might go wrong aftwerwards
+        // and the rolladen is better off closed than opened in case the config file corrupted /
+        // the internet connection is bad or something similar.
+        
+        let mut throwaway = RolladenState::new();
+        close_rolladen(config.clone(), &mut throwaway);
+    }
+ 
+
     JournalLog::new().unwrap().install().unwrap();
     log::set_max_level(log::LevelFilter::Info);
     info!("Loaded configuration and selected {} profile.", config.default_profile);
@@ -28,12 +39,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_temperature_oversampling(bme680::OversamplingSetting::OS8x)
         .with_humidity_oversampling(bme680::OversamplingSetting::OS2x)
         .with_pressure_oversampling(bme680::OversamplingSetting::OS4x)
-        .with_gas_measurement(Duration::from_millis(200), 320, 25)
+        .with_gas_measurement(Duration::from_millis(400), 320, 25)
         .build();
 
     let _ = sensor.set_sensor_settings(&mut delay, settings);
     info!("Set sensor (bme680) up");
-
 
     let mut did_change = false;
     let mut current_state = RolladenState::new();
@@ -57,12 +67,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         
         // 2. Handle light & temperature changes
         let _ = sensor.set_sensor_mode(&mut delay, PowerMode::ForcedMode);
-        sleep(Duration::from_millis(500));
+        sleep(Duration::from_millis(1000));
         let (data, _condition) = sensor.get_sensor_data(&mut delay).unwrap();
         current_state.current_temperature = data.temperature_celsius();
         current_state.current_pressure = data.pressure_hpa();
         current_state.current_humidity = data.humidity_percent();
         current_state.current_gas_resistance = data.gas_resistance_ohm() as f32;
+        info!("G-Resistance: {}", current_state.current_gas_resistance);
         if iterations_since_data_send >= config.get_profile().unwrap().iterations_send_data{
             // Read the data whenever to keep sensor warm, only send sometimes to reduce bandwidth
             current_state.publish_state(config.clone());
